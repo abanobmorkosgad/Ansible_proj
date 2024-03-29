@@ -1,0 +1,41 @@
+---
+- name: install nodejs and npm
+  hosts: remote
+  tasks:
+    - name: install nodejs
+      yum: 
+        name:
+        - nodejs
+        - npm
+        state: present
+
+- name: Deploy nodejs App
+  hosts: remote
+  tasks:
+      - name: Copy App
+        ansible.builtin.copy:
+          src: /root/nodejsapp/battleships/battleships-1.0.0.tgz
+          dest: /root/battleships-1.0.0.tgz
+
+      - name: Unpack nodejs file
+        ansible.builtin.unarchive:
+          src: /root/battleships-1.0.0.tgz
+          dest: /root/
+          remote_src: yes
+
+      - name: install dependancies
+        community.general.npm:
+          path: /root/package
+
+      - name: start App
+        command: node /root/package/server.js
+        async: 1000
+        poll: 0
+        
+      - name: Ensure port 3000 is open
+        ansible.builtin.firewalld:
+          port: 3000/tcp
+          permanent: yes
+          state: enabled
+          immediate: yes
+
