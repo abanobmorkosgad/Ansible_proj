@@ -1,0 +1,12 @@
+ssh-keygen
+vim ~/.ssh/authorized_keys
+yum install nodejs
+yum install npm
+mkdir nodeapp && cd nodeapp
+scp root@192.168.200.132:/root/nodejsapp/battleships/battleships-1.0.0.tgz .
+tar -xzf battleships-1.0.0.tgz
+cd package/
+npm install
+node server.js
+firewall-cmd --add-port=3000/tcp
+
